@@ -61,11 +61,15 @@ export APP_PORT=${APP_PORT:-80}
 export MYSQL_PORT=${MYSQL_PORT:-3306}
 export WWWUSER=${WWWUSER:-$UID}
 
+if [[ -f .env ]]; then
+    source .env
+fi
+
 COMPOSE=$(which docker-compose)
 if [[ -z "$COMPOSE" ]]; then
      EXEC="no"
 else
-    COMPOSE="docker-compose -f .docker/docker-compose.yml"
+    COMPOSE="COMPOSE_PROJECT_NAME=$APP_NAME docker-compose -f .docker/docker-compose.yml"
     PSRESULT="$($COMPOSE ps -q)"
     if [[ ! -z "$PSRESULT" ]]; then
         EXEC="yes"

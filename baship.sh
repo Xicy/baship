@@ -9,9 +9,6 @@
 #installSelf
 
 if [[ $# -gt 0 ]]; then
-    if [[ -f .env ]]; then
-        source .env
-    fi
 
     if [[ "$1" == "--version" ]] || [[ "$1" == "-v" ]] || [[ "$1" == "version" ]]; then
         showVersion
