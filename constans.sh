@@ -69,7 +69,7 @@ COMPOSE=$(which docker-compose)
 if [[ -z "$COMPOSE" ]]; then
      EXEC="no"
 else
-    COMPOSE="COMPOSE_PROJECT_NAME=\"$APP_NAME\" && $COMPOSE -f $(pwd)/.docker/docker-compose.yml"
+    COMPOSE="COMPOSE_PROJECT_NAME=$APP_NAME && $COMPOSE -f $(pwd)/.docker/docker-compose.yml"
     PSRESULT="$($COMPOSE ps -q)"
     if [[ ! -z "$PSRESULT" ]]; then
         EXEC="yes"
