@@ -6,3 +6,5 @@
 #exportDockerFiles $0
 #selfUpdate $0
 #installDocker
+
+echo "test"
