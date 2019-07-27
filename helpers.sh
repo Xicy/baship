@@ -1,4 +1,6 @@
 #@IgnoreInspection BashAddShebang
+ver() { printf "%03d%03d%03d%03d" $(echo "$1" | tr '.' ' '); }
+
 showVersion() {
     intro="\n🐳 ${COL_GREEN}Baship for Docker${COL_RESET}"
     intro="$intro   ${COL_CYAN}Version ${VERSION}\n${COL_RESET}"
@@ -61,8 +63,15 @@ exportDockerFiles() {
 }
 
 selfUpdate() {
-  curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
-  printf "${COL_LGREEN}Update Successfully${COL_RESET}"
+  DATA = curl -s https://api.github.com/repos/Xicy/baship/releases/latest
+  VER = $($(DATA) | grep "tag_name.*"  | cut -d '"' -f 4)
+  if [ $(VER VERSION) -lt $(ver VER) ]; then
+    curl -s -L "$($(DATA) | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
+    printf "${COL_LGREEN}Update Successfully${COL_RESET}"
+    exit 0
+  else
+    printf "${COL_LGREEN}This is latest version: ${VERSION}${COL_RESET}"
+  fi
 }
 
 installDocker() {
