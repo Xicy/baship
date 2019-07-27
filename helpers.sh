@@ -1,0 +1,1 @@
+export_docker() { sed '1,/^_DATA_/d' $0 | tar xzf -; }
