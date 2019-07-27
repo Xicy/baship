@@ -1,6 +1,6 @@
 #@IgnoreInspection BashAddShebang
 showVersion() {
-    intro="\nðŸ³ ${COL_GREEN}Baship for Docker${COL_RESET}\n"
+    intro="\n🐳 ${COL_GREEN}Baship for Docker${COL_RESET}"
     intro="$intro   ${COL_CYAN}Version ${VERSION}\n${COL_RESET}"
 
     printf "$intro"
@@ -57,22 +57,25 @@ showHelp() {
 
 exportDockerFiles() {
   sed '1,/^_DATA_/d' $0 | tar xzf -
+  printf "${COL_LGREEN}Exporting Successfully${COL_RESET}"
 }
 
 selfUpdate() {
   curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
-  echo "Update Successfully"
+  printf "${COL_LGREEN}Update Successfully${COL_RESET}"
 }
 
 installDocker() {
 	wget -q -O - "http://get.docker.com"  | bash
     curl -s -L "$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "browser_download_url.*docker-compose-$(uname -s)-$(uname -m)\"" | cut -d '"' -f 4 )" -o /usr/local/bin/docker-compose
 	chmod +x /usr/local/bin/docker-compose
+	printf "${COL_LGREEN}Docker Installing Successfully${COL_RESET}"
 }
 
 installSelf() {
     curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o /usr/local/bin/baship
 	chmod +x /usr/local/bin/baship
+	printf "${COL_LGREEN}Install Successfully${COL_RESET}"
 }
 
 initProject(){
