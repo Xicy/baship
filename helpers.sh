@@ -87,7 +87,7 @@ installSelf() {
 	if [[ -z "$(sudo grep "bin/baship" /etc/sudoers)" ]]; then
         sudo echo "$(whoami)     ALL=(ALL)       NOPASSWD:/usr/local/bin/baship" >> /etc/sudoers
     fi
-	printf "${COL_LGREEN}Install Successfully${COL_RESET}\n"
+	printf "${COL_LGREEN}Baship Installing Successfully${COL_RESET}\n"
 }
 
 initProject(){
