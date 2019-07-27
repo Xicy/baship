@@ -2,7 +2,7 @@ language: bash
 script: bash ./build.sh
 deploy:
   provider: releases
-  api_key: "GITHUB OAUTH TOKEN"
+  api_key: $GITHUB_TOKEN
   file: "baship"
   skip_cleanup: true
   on:
