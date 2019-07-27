@@ -60,6 +60,7 @@ fi
 export APP_PORT=${APP_PORT:-80}
 export MYSQL_PORT=${MYSQL_PORT:-3306}
 export WWWUSER=${WWWUSER:-$UID}
+export COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-${APP_NAME:-"app"}}
 
 if [[ -f "$(pwd)/.env" ]]; then
     source "$(pwd)/.env"
@@ -69,7 +70,6 @@ COMPOSE=$(which docker-compose)
 if [[ -z "$COMPOSE" ]] || [[ ! -f "$(pwd)/.docker/docker-compose.yml" ]]; then
      EXEC="no"
 else
-    export COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-${APP_NAME:-"app"}}
     COMPOSE="$COMPOSE -f $(pwd)/.docker/docker-compose.yml"
     PSRESULT="$($COMPOSE ps -q)"
     if [[ ! -z "$PSRESULT" ]]; then
