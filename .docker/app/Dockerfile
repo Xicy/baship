@@ -1,9 +1,9 @@
 FROM ubuntu:18.04
 
-LABEL maintainer="Chris Fidao"
+LABEL maintainer="Umut Akkaya"
 
-RUN useradd -ms /bin/bash -u 1337 vessel
-WORKDIR /var/www/html
+RUN useradd -ms /bin/bash -u 1337 baship
+WORKDIR /var/www
 
 ENV TZ=UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -39,7 +39,7 @@ COPY h5bp /etc/nginx/h5bp
 COPY default /etc/nginx/sites-available/default
 COPY php-fpm.conf /etc/php/7.3/fpm/php-fpm.conf
 COPY xdebug.ini /etc/php/7.3/mods-available/xdebug.ini
-COPY vessel.ini /etc/php/7.3/fpm/conf.d/99-vessel.ini
+COPY baship.ini /etc/php/7.3/fpm/conf.d/99-baship.ini
 
 EXPOSE 80
 

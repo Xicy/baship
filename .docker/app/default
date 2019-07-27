@@ -1,18 +1,16 @@
 server {
-    listen 80 default_server;
+    listen 80;
+    listen [::]:80;
 
-    root /var/www/html/public;
-
+    root /var/www/public;
     index index.html index.htm index.php;
 
-    server_name _;
+    include h5bp/basic.conf;
 
     charset utf-8;
 
     location = /favicon.ico { log_not_found off; access_log off; }
     location = /robots.txt  { log_not_found off; access_log off; }
-
-    include h5bp/basic.conf;
 
     client_max_body_size 100M;
 
@@ -21,7 +19,7 @@ server {
     }
 
     location ~ \.php$ {
-        add_header X-Served-By Vessel;
+        add_header X-Served-By Baship;
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/run/php/php7.3-fpm.sock;
     }

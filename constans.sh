@@ -1,3 +1,4 @@
+#@IgnoreInspection BashAddShebang
 # This script is meant for quick & easy install via:
 #   $ curl -fsSL "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o - | bash /dev/stdin install
 
@@ -23,7 +24,7 @@ case "${UNAMEOUT}" in
     *)                  MACHINE="UNKNOWN"
 esac
 
-if [ "$MACHINE" == "UNKNOWN" ]; then
+if [[ "$MACHINE" == "UNKNOWN" ]]; then
     echo "Unsupported system type"
     echo "System must be a Macintosh, Linux or Windows"
     echo ""
@@ -33,25 +34,25 @@ if [ "$MACHINE" == "UNKNOWN" ]; then
 fi
 
 # Set environment variables for dev
-if [ "$MACHINE" == "linux" ]; then
+if [[ "$MACHINE" == "linux" ]]; then
     if grep -q Microsoft /proc/version; then # WSL
         export XDEBUG_HOST=10.0.75.1
     else
-        if [ "$(command -v ip)" ]; then
+        if [[ "$(command -v ip)" ]]; then
             export XDEBUG_HOST=$(ip addr show docker0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
         else
             export XDEBUG_HOST=$(ifconfig docker0 | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1)
         fi
     fi
     SEDCMD="sed -i"
-elif [ "$MACHINE" == "mac" ]; then
+elif [[ "$MACHINE" == "mac" ]]; then
     export XDEBUG_HOST=$(ipconfig getifaddr en0) # Ethernet
 
-    if [ -z "$XDEBUG_HOST" ]; then
+    if [[ -z "$XDEBUG_HOST" ]]; then
         export XDEBUG_HOST=$(ipconfig getifaddr en1) # Wifi
     fi
     SEDCMD="sed -i .bak"
-elif [ "$MACHINE" == "mingw64" ]; then # Git Bash
+elif [[ "$MACHINE" == "mingw64" ]]; then # Git Bash
     export XDEBUG_HOST=10.0.75.1
     SEDCMD="sed -i"
 fi
@@ -64,10 +65,8 @@ COMPOSE="docker-compose -f .docker/docker-compose.yml"
 
 # Is the environment running
 PSRESULT="$($COMPOSE ps -q)"
-if [ ! -z "$PSRESULT" ]; then
+if [[ ! -z "$PSRESULT" ]]; then
     EXEC="yes"
 else
     EXEC="no"
 fi
-
-# Create base docker-compose command to run

@@ -1,8 +1,8 @@
 FROM node:latest
 
-LABEL maintainer="Chris Fidao"
+LABEL maintainer="Umut Akkaya"
 
-WORKDIR /var/www/html
+WORKDIR /var/www
 
 ARG uid=999
 

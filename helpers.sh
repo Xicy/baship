@@ -1,3 +1,4 @@
+#@IgnoreInspection BashAddShebang
 showVersion() {
     intro="\nðŸ³ ${COL_GREEN}Baship for Docker${COL_RESET}\n"
     intro="$intro   ${COL_CYAN}Version ${VERSION}\n${COL_RESET}"
@@ -54,26 +55,87 @@ showHelp() {
 
 }
 
-exportDockerFiles() { 
+exportDockerFiles() {
   sed '1,/^_DATA_/d' $0 | tar xzf -
 }
 
 selfUpdate() {
   curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
   echo "Update Successfully"
-  exit 0
 }
 
 installDocker() {
 	wget -q -O - "http://get.docker.com"  | bash
     curl -s -L "$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "browser_download_url.*docker-compose-$(uname -s)-$(uname -m)\"" | cut -d '"' -f 4 )" -o /usr/local/bin/docker-compose
 	chmod +x /usr/local/bin/docker-compose
-	exit 0
 }
 
 installSelf() {
     curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o /usr/local/bin/baship
 	chmod +x /usr/local/bin/baship
-	exit 0
 }
 
+initProject(){
+	echo "BASHIP: Initializing Baship..."
+    COMPOSER=$(which composer)
+
+    echo "BASHIP: Installing Predis"
+    if [[ -z "$COMPOSER" ]]; then
+      docker run -u $UID --rm -it -v $(pwd):/opt -w /opt shippingdocker/php-composer:latest composer require predis/predis
+        $COMPOSE run --rm app composer "$@"
+        $COMPOSE exec -u baship app php artisan "$@"
+    else
+        $COMPOSER require predis/predis
+    fi
+
+	if [[ ! -f .env ]] && [[ -f .env.example ]]; then
+		cp .env.example .env
+	fi
+
+    if [[ ! -f .env ]]; then
+        echo "No .env file found within current working directory $(pwd)"
+        echo "Create a .env file before re-initializing"
+        exit 1
+    fi
+
+    echo "BASHIP: Setting .env Variables"
+    cp .env .env.bak.baship
+
+    if [[ ! -z "$(grep "DB_HOST" .env)" ]]; then
+        $SEDCMD "s/DB_HOST=.*/DB_HOST=mysql/" .env
+    else
+        echo "DB_HOST=mysql" >> .env
+    fi
+
+    if [[ ! -z "$(grep "CACHE_DRIVER" .env)" ]]; then
+        $SEDCMD "s/CACHE_DRIVER=.*/CACHE_DRIVER=redis/" .env
+    else
+        echo "CACHE_DRIVER=redis" >> .env
+    fi
+
+    if [[ ! -z "$(grep "SESSION_DRIVER" .env)" ]]; then
+        $SEDCMD "s/SESSION_DRIVER=.*/SESSION_DRIVER=redis/" .env
+    else
+        echo "SESSION_DRIVER=redis" >> .env
+    fi
+
+    if [[ ! -z "$(grep "REDIS_HOST" .env)" ]]; then
+        $SEDCMD "s/REDIS_HOST=.*/REDIS_HOST=redis/" .env
+    else
+        echo "REDIS_HOST=redis" >> .env
+    fi
+
+    if [[ -f .env.bak ]]; then
+        rm .env.bak
+    fi
+
+    if [[ ! -d .docker ]]; then
+        exportDockerFiles $@
+    fi
+
+    echo ""
+    echo "BASHIP: Complete!"
+    echo "BASHIP: You can now use Baship"
+    echo "BASHIP: Try starting it:"
+    echo "baship start"
+}
