@@ -1,5 +1,5 @@
 version: '3.6'
-x-default: &defaults
+x-daemon: &defaults
   logging:
     driver: "json-file"
     options:
