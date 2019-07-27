@@ -65,7 +65,7 @@ exportDockerFiles() {
 updateSelf() {
   DATA=$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest)
   LASTESTVERSION=$(echo "$DATA" | grep "tag_name.*"  | cut -d '"' -f 4 )
-  if [[ $(ver ${VERSION}) -lt $(ver ${LASTESTVERSION}) ]]; then
+  if [[ $((10#$(ver ${VERSION}))) -lt $((10#$(ver ${LASTESTVERSION}))) ]]; then
     sudo curl -s -L "$(echo "$DATA" | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
     printf "${COL_LGREEN}Update Successfully ( ${VERSION} -> ${LASTESTVERSION} )${COL_RESET}\n"
     exit 0
