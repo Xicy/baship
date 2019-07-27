@@ -2,9 +2,8 @@ language: minimal
 jobs:
   include:
     - stage: build
-      script: build.sh
+      script: ./build.sh
     - stage: deploy
-      script: skip
       deploy:
         provider: releases
         api_key: "GITHUB OAUTH TOKEN"
