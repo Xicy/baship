@@ -62,7 +62,7 @@ exportDockerFiles() {
   printf "${COL_LGREEN}Exporting Successfully${COL_RESET}\n"
 }
 
-selfUpdate() {
+updateSelf() {
   DATA=$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest)
   LASTESTVERSION=$(echo "$DATA" | grep "tag_name.*"  | cut -d '"' -f 4 )
   if [[ $(ver ${VERSION}) -lt $(ver ${LASTESTVERSION}) ]]; then
@@ -92,11 +92,17 @@ initProject(){
 	echo "BASHIP: Initializing Baship..."
     COMPOSER=$(which composer)
 
+    if [[ ! -d .docker ]]; then
+        exportDockerFiles $@
+    fi
+
     echo "BASHIP: Installing Predis"
     if [[ -z "$COMPOSER" ]]; then
-      docker run -u $UID --rm -it -v $(pwd):/opt -w /opt shippingdocker/php-composer:latest composer require predis/predis
-        $COMPOSE run --rm app composer "$@"
-        $COMPOSE exec -u baship app php artisan "$@"
+      if [[ "$EXEC" == "yes" ]]; then
+        $COMPOSE exec -u baship app composer require predis/predis
+      else
+        $COMPOSE run --rm app composer require predis/predis
+      fi
     else
         $COMPOSER require predis/predis
     fi
@@ -140,10 +146,6 @@ initProject(){
 
     if [[ -f .env.bak ]]; then
         rm .env.bak
-    fi
-
-    if [[ ! -d .docker ]]; then
-        exportDockerFiles $@
     fi
 
     echo ""

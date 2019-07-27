@@ -3,13 +3,7 @@
 #CONSTANTS
 #HELPERS
 
-#exportDockerFiles $0
-#selfUpdate $0
-#installDocker
-#installSelf
-
 if [[ $# -gt 0 ]]; then
-
     if [[ "$1" == "--version" ]] || [[ "$1" == "-v" ]] || [[ "$1" == "version" ]]; then
         showVersion
         exit 0
@@ -22,10 +16,9 @@ if [[ $# -gt 0 ]]; then
         initProject $@
     elif [[ "$1" == "install" ]]; then
         installSelf
-		#check docker and install
-		#check docker-compose and install
+		installDocker
 	elif [[ "$1" == "update" ]]; then
-        selfUpdate $0
+        updateSelf $0
 	elif [[ "$1" == "export" ]]; then
         exportDockerFiles $0
     elif [[ "$1" == "start" ]]; then
