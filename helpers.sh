@@ -96,18 +96,6 @@ initProject(){
         exportDockerFiles $@
     fi
 
-    COMPOSER=$(which composer)
-    echo "BASHIP: Installing Predis"
-    if [[ -z "$COMPOSER" ]]; then
-      if [[ "$EXEC" == "yes" ]]; then
-        $COMPOSE exec -u baship app composer require predis/predis
-      else
-        $COMPOSE run --rm app composer require predis/predis
-      fi
-    else
-        $COMPOSER require predis/predis
-    fi
-
 	if [[ ! -f "$(pwd)/.env" ]] && [[ -f "$(pwd)/.env.example" ]]; then
 		cp "$(pwd)/.env.example" "$(pwd)/.env"
 	fi
@@ -119,12 +107,18 @@ initProject(){
     fi
 
     echo "BASHIP: Setting .env Variables"
-    cp .env .env.bak.baship
+    cp "$(pwd)/.env" "$(pwd)/.env.bak.baship"
 
     if [[ ! -z "$(grep "DB_HOST" "$(pwd)/.env")" ]]; then
         $SEDCMD "s/DB_HOST=.*/DB_HOST=mysql/" "$(pwd)/.env"
     else
         echo "DB_HOST=mysql" >> "$(pwd)/.env"
+    fi
+
+    if [[ ! -z "$(grep "DB_PASSWORD" "$(pwd)/.env")" ]]; then
+        $SEDCMD "s/DB_PASSWORD=$\n/DB_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)/" "$(pwd)/.env"
+    else
+        echo "DB_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)" >> "$(pwd)/.env"
     fi
 
     if [[ ! -z "$(grep "CACHE_DRIVER" "$(pwd)/.env")" ]]; then
@@ -147,6 +141,18 @@ initProject(){
 
     if [[ -f "$(pwd)/.env.bak" ]]; then
         rm "$(pwd)/.env.bak"
+    fi
+
+    COMPOSER=$(which composer)
+    echo "BASHIP: Installing Predis"
+    if [[ -z "$COMPOSER" ]]; then
+      if [[ "$EXEC" == "yes" ]]; then
+        $COMPOSE exec -u baship app composer require predis/predis
+      else
+        $COMPOSE run --rm app composer require predis/predis
+      fi
+    else
+        $COMPOSER require predis/predis
     fi
 
     echo ""
