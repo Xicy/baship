@@ -3,4 +3,5 @@
 #CONSTANTS
 #HELPERS
 
-export_docker $0
+#export_docker $0
+#update $0
