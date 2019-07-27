@@ -1,0 +1,14 @@
+language: minimal
+jobs:
+  include:
+    - stage: build
+      script: build.sh
+    - stage: deploy
+      script: skip
+      deploy:
+        provider: releases
+        api_key: "GITHUB OAUTH TOKEN"
+        file: "baship"
+        skip_cleanup: true
+        on:
+          tags: on
