@@ -1,5 +1,5 @@
 # This script is meant for quick & easy install via:
-#   $ curl -fsSL "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o - | bash
+#   $ curl -fsSL "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o - | bash /dev/stdin install
 
 # define colors that are used in the help screen
 ESC_SEQ="\x1b["
@@ -59,3 +59,15 @@ fi
 export APP_PORT=${APP_PORT:-80}
 export MYSQL_PORT=${MYSQL_PORT:-3306}
 export WWWUSER=${WWWUSER:-$UID}
+
+COMPOSE="docker-compose -f .docker/docker-compose.yml"
+
+# Is the environment running
+PSRESULT="$($COMPOSE ps -q)"
+if [ ! -z "$PSRESULT" ]; then
+    EXEC="yes"
+else
+    EXEC="no"
+fi
+
+# Create base docker-compose command to run
