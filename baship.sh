@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/b
 #VERSION
 #CONSTANTS
 #HELPERS
@@ -35,4 +35,3 @@ else
 	echo "compose ps"
     #$COMPOSE ps
 fi
-
