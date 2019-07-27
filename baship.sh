@@ -3,5 +3,6 @@
 #CONSTANTS
 #HELPERS
 
-#export_docker $0
-#update $0
+#exportDockerFiles $0
+#selfUpdate $0
+#installDocker
