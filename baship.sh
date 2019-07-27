@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-VERSION="0.0.2"
-
+#VERSION
 #EXPORTFUNC
 
-export_data $0
+export_docker $0
