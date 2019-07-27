@@ -66,7 +66,7 @@ if [[ -f "$(pwd)/.env" ]]; then
 fi
 
 COMPOSE=$(which docker-compose)
-if [[ ! -z "$COMPOSE" ]]; then
+if [[ -z "$COMPOSE" ]]; then
      EXEC="no"
 else
     COMPOSE="COMPOSE_PROJECT_NAME=\"$APP_NAME\" && $COMPOSE -f $(pwd)/.docker/docker-compose.yml"
