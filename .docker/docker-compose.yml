@@ -20,7 +20,7 @@ services:
       XDEBUG_HOST: "${XDEBUG_HOST}"
       WWWUSER: "${WWWUSER}"
     volumes:
-      - .:/var/www
+      - .:/var/www:cached
   node:
     <<: *defaults
     build:
@@ -30,7 +30,7 @@ services:
         uid: "${WWWUSER}"
     user: node
     volumes:
-      - .:/var/www
+      - .:/var/www:cached
   mysql:
     <<: *defaults
     image: mysql:5.7

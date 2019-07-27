@@ -1,6 +1,6 @@
 #@IgnoreInspection BashAddShebang
 # This script is meant for quick & easy install via:
-#   $ curl -fsSL "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o - | bash /dev/stdin install
+#   $ curl -fsSL "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o - | sudo bash /dev/stdin install
 
 # define colors that are used in the help screen
 ESC_SEQ="\x1b["

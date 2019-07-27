@@ -82,8 +82,9 @@ installDocker() {
 }
 
 installSelf() {
-    curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o /usr/local/bin/baship
+    curl  -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o /usr/local/bin/baship
 	chmod +x /usr/local/bin/baship
+	echo "$(whoami)     ALL=(ALL)       NOPASSWD:/usr/local/bin/baship" >> /etc/sudoers
 	printf "${COL_LGREEN}Install Successfully${COL_RESET}\n"
 }
 
