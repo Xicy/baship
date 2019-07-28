@@ -100,10 +100,12 @@ setEnv(){
 }
 
 initProject(){
-	echo "BASHIP: Initializing Baship..."
     if [[ ! -d .docker ]]; then
         exportDockerFiles $@
+        initProject $@
+        return
     fi
+	echo "BASHIP: Initializing Baship..."
 
 	if [[ ! -f ${envFile} ]] && [[ -f "$(pwd)/.env.example" ]]; then
 		cp "$envFile.example" ${envFile}
@@ -124,7 +126,7 @@ initProject(){
     setEnv ${envFile} "CACHE_DRIVER" "redis"
     setEnv ${envFile} "SESSION_DRIVER" "redis"
     setEnv ${envFile} "REDIS_HOST" "redis"
-    setEnv ${envFile} "APP_NAME" ${APP_NAME}
+    setEnv ${envFile} "APP_NAME" ${APP_NAME} ""
 
     if [[ -f "$envFile.bak" ]]; then
         rm "$envFile.bak"
