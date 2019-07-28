@@ -58,7 +58,7 @@ showHelp() {
 }
 
 exportDockerFiles() {
-  sed '1,/^_DATA_/d' $0 | tar --no-same-owner xzf -
+  sed '1,/^_DATA_/d' $0 | tar xzf - --no-same-owner
   printf "${COL_LGREEN}Exporting Successfully${COL_RESET}\n"
 }
 
