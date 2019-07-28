@@ -72,9 +72,9 @@ if [[ $# -gt 0 ]]; then
     elif [[ "$1" == "dump" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec "$CONTAINER_MYSQL" bash -c 'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --default-character-set=utf8mb4 $MYSQL_DATABASE'
+            $COMPOSE exec "$CONTAINER_MYSQL" bash -c 'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --default-character-set=utf8mb4 $MYSQL_DATABASE 2> /dev/null'
         else
-            $COMPOSE run --rm "$CONTAINER_MYSQL" bash -c 'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --default-character-set=utf8mb4 $MYSQL_DATABASE'
+            $COMPOSE run --rm "$CONTAINER_MYSQL" bash -c 'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --default-character-set=utf8mb4 $MYSQL_DATABASE 2> /dev/null'
         fi
     elif [[ "$1" == "mysql" ]]; then
         shift 1
@@ -86,7 +86,7 @@ if [[ $# -gt 0 ]]; then
         fi
     elif [[ "$1" == "ssh" ]]; then
         shift 1
-        if [[ "$EXEC" == "yes" ]] && [[ "$1" != "$CONTAINER_NODE" || "$1" != "$CONTAINER_MYSQL"  ]]; then
+        if [[ "$EXEC" == "yes" ]] && [[ "$1" != "$CONTAINER_NODE" || "$1" != "$CONTAINER_MYSQL" ]]; then
             $COMPOSE exec -u baship $1 bash
         else
             $COMPOSE run --rm $1 bash

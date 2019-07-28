@@ -2,7 +2,7 @@
 ver() { printf "%03d%03d%03d" $(echo "$1" | tr '.' ' '); }
 
 showVersion() {
-    intro="\n🐳 ${COL_GREEN}Baship for Docker${COL_RESET}"
+    intro="\n🐳  ${COL_GREEN}Baship for Docker${COL_RESET}"
     intro="$intro   ${COL_CYAN}Version ${VERSION}\n${COL_RESET}"
 
     printf "$intro"
@@ -117,13 +117,14 @@ initProject(){
     echo "BASHIP: Setting .env Variables"
     cp ${envFile} "$envFile.bak.baship"
 
+    setEnv ${envFile} "APP_NAME" "$COMPOSE_PROJECT_NAME"
     setEnv ${envFile} "SERVICES" "\"$SERVICES\""
+    setEnv ${envFile} "DB_USERNAME" "laravel" ".*"
     setEnv ${envFile} "DB_HOST" "mysql" ".*"
     setEnv ${envFile} "DB_PASSWORD" "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
     setEnv ${envFile} "CACHE_DRIVER" "redis" ".*"
     setEnv ${envFile} "SESSION_DRIVER" "redis" ".*"
     setEnv ${envFile} "REDIS_HOST" "redis" ".*"
-    setEnv ${envFile} "APP_NAME" "$COMPOSE_PROJECT_NAME"
 
     if [ -f "$envFile.bak" ]; then
         rm "$envFile.bak"
