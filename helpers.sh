@@ -141,7 +141,7 @@ initProject(){
     fi
 
     echo "BASHIP: Installing Predis"
-    exec $0 composer require predis/predis
+    bash $0 composer require predis/predis
 
     echo ""
     echo "BASHIP: Complete!"
