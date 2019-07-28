@@ -66,7 +66,7 @@ updateSelf() {
   DATA=$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest)
   LASTESTVERSION=$(echo "$DATA" | grep "tag_name.*"  | cut -d '"' -f 4 )
   if [[ $(expr $(ver ${LASTESTVERSION}) - $(ver ${VERSION})) -gt 0 ]]; then
-    sudo curl -s -L "$(echo "$DATA" | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
+    curl -s -L "$(echo "$DATA" | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
     printf "${COL_LGREEN}Update Successfully ( ${VERSION} -> ${LASTESTVERSION} )${COL_RESET}\n"
     exit 0
   else
@@ -75,17 +75,17 @@ updateSelf() {
 }
 
 installDocker() {
-	sudo curl -s -L "http://get.docker.com" -o - | sh
-    sudo curl -s -L "$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "browser_download_url.*docker-compose-$(uname -s)-$(uname -m)\"" | cut -d '"' -f 4 )" -o /usr/local/bin/docker-compose
-	sudo chmod +x /usr/local/bin/docker-compose
+    curl -s -L "http://get.docker.com" -o - | sh
+    curl -s -L "$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "browser_download_url.*docker-compose-$(uname -s)-$(uname -m)\"" | cut -d '"' -f 4 )" -o /usr/local/bin/docker-compose
+	chmod +x /usr/local/bin/docker-compose
 	printf "${COL_LGREEN}Docker Installing Successfully${COL_RESET}\n"
 }
 
 installSelf() {
-    sudo curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o /usr/local/bin/baship
-	sudo chmod +x /usr/local/bin/baship
-	if [[ -z "$(sudo grep "bin/baship" /etc/sudoers)" ]]; then
-        sudo echo "$(whoami)     ALL=(ALL)       NOPASSWD:/usr/local/bin/baship" >> /etc/sudoers
+    curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o /usr/local/bin/baship
+	chmod +x /usr/local/bin/baship
+	if [[ -z "$( grep "bin/baship" /etc/sudoers)" ]]; then
+        echo "$(whoami)     ALL=(ALL)       NOPASSWD:/usr/local/bin/baship" >> /etc/sudoers
     fi
 	printf "${COL_LGREEN}Baship Installing Successfully${COL_RESET}\n"
 }
