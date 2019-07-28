@@ -22,7 +22,7 @@ if [[ $# -gt 0 ]]; then
 	elif [[ "$1" == "export" ]]; then
         exportDockerFiles $0
     elif [[ "$1" == "start" ]]; then
-        $COMPOSE up -d "$SERVICES"
+        $COMPOSE up -d ${SERVICES}
     elif [[ "$1" == "stop" ]]; then
         $COMPOSE down
     elif [[ "$1" == "php" ]]; then

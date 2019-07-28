@@ -2,7 +2,9 @@ FROM ubuntu:18.04
 
 LABEL maintainer="Umut Akkaya"
 
-RUN useradd -ms /bin/bash -u 1337 baship
+ENV WWWUSER=1337
+
+RUN useradd -ms /bin/bash -u $WWWUSER baship
 WORKDIR /var/www
 
 ENV TZ=UTC
@@ -10,7 +12,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN set -x \
-    && apt-get update && apt-get install -y gnupg gosu \
+    && apt-get update && apt-get install -y gnupg gosu cron \
     && gosu nobody true
 
 RUN echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu bionic main" > /etc/apt/sources.list.d/ppa_ondrej_php.list \
@@ -37,6 +39,7 @@ RUN echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu bionic main" > /etc/apt
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
+ADD  crontab /etc/cron.d/baship-cron
 COPY h5bp /etc/nginx/h5bp
 COPY default /etc/nginx/sites-available/default
 COPY php-fpm.conf /etc/php/7.3/fpm/php-fpm.conf
@@ -47,6 +50,8 @@ EXPOSE 80
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY start-container /usr/local/bin/start-container
-RUN chmod +x /usr/local/bin/start-container
+RUN chmod +x /usr/local/bin/start-container && chmod -R 644 /etc/cron.d && crontab /etc/cron.d/baship-cron
+
+CMD cron
 
 ENTRYPOINT ["start-container"]
