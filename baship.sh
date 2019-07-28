@@ -69,27 +69,24 @@ if [[ $# -gt 0 ]]; then
     elif [[ "$1" == "yarn" ]]; then
         shift 1
         $COMPOSE run --rm "$CONTAINER_NODE" yarn "$@"
-    elif [[ "$1" == "gulp" ]]; then
-        shift 1
-        $COMPOSE run --rm "$CONTAINER_NODE" ./node_modules/.bin/gulp "$@"
     elif [[ "$1" == "dump" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec "$CONTAINER_MYSQL" bash -c 'MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysqldump -u root --default-character-set=utf8mb4 $MYSQL_DATABASE'
+            $COMPOSE exec "$CONTAINER_MYSQL" bash -c 'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --default-character-set=utf8mb4 $MYSQL_DATABASE'
         else
-            $COMPOSE run --rm "$CONTAINER_MYSQL" bash -c 'MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysqldump -u root --default-character-set=utf8mb4 $MYSQL_DATABASE'
+            $COMPOSE run --rm "$CONTAINER_MYSQL" bash -c 'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --default-character-set=utf8mb4 $MYSQL_DATABASE'
         fi
     elif [[ "$1" == "mysql" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec "$CONTAINER_MYSQL" bash -c 'MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysql -u root $MYSQL_DATABASE'
+            $COMPOSE exec "$CONTAINER_MYSQL" bash -c 'mysql -u root -p"$MYSQL_ROOT_PASSWORD" $MYSQL_DATABASE'
         else
             echo "Error: This command can only be run while a MySQL container is running mysqld (mysql server)."
             echo "This command cannot run the server and the mysql client at the same time."
         fi
     elif [[ "$1" == "ssh" ]]; then
         shift 1
-        if [[ "$EXEC" == "yes" ]] && [[ "$1" != "node" ]]; then
+        if [[ "$EXEC" == "yes" ]] && [[ "$1" != "$CONTAINER_NODE" || "$1" != "$CONTAINER_MYSQL"  ]]; then
             $COMPOSE exec -u baship $1 bash
         else
             $COMPOSE run --rm $1 bash
