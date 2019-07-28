@@ -28,61 +28,61 @@ if [[ $# -gt 0 ]]; then
     elif [[ "$1" == "php" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec -u baship ${CONTAINER_APP} php "$@"
+            $COMPOSE exec -u baship "$CONTAINER_APP" php "$@"
         else
-            $COMPOSE run --rm ${CONTAINER_APP} php "$@"
+            $COMPOSE run --rm "$CONTAINER_APP" php "$@"
         fi
     elif [[ "$1" == "artisan" ]] || [[ "$1" == "art" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec -u baship ${CONTAINER_APP} php artisan "$@"
+            $COMPOSE exec -u baship "$CONTAINER_APP" php artisan "$@"
         else
-            $COMPOSE run --rm ${CONTAINER_APP} php artisan "$@"
+            $COMPOSE run --rm "$CONTAINER_APP" php artisan "$@"
         fi
     elif [[ "$1" == "composer" ]] || [[ "$1" == "comp" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec -u baship ${CONTAINER_APP} composer "$@"
+            $COMPOSE exec -u baship "$CONTAINER_APP" composer "$@"
         else
-            $COMPOSE run --rm ${CONTAINER_APP} composer "$@"
+            $COMPOSE run --rm "$CONTAINER_APP" composer "$@"
         fi
     elif [[ "$1" == "test" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec -u baship ${CONTAINER_APP} ./vendor/bin/phpunit "$@"
+            $COMPOSE exec -u baship "$CONTAINER_APP" ./vendor/bin/phpunit "$@"
         else
-            $COMPOSE run --rm ${CONTAINER_APP} ./vendor/bin/phpunit "$@"
+            $COMPOSE run --rm "$CONTAINER_APP" ./vendor/bin/phpunit "$@"
         fi
     elif [[ "$1" == "tinker" ]] ; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec -u baship ${CONTAINER_APP} php artisan tinker
+            $COMPOSE exec -u baship "$CONTAINER_APP" php artisan tinker
         else
-            $COMPOSE run --rm ${CONTAINER_APP} php artisan tinker
+            $COMPOSE run --rm "$CONTAINER_APP" php artisan tinker
         fi
     elif [[ "$1" == "node" ]]; then
         shift 1
-        $COMPOSE run --rm ${CONTAINER_NODE} node "$@"
+        $COMPOSE run --rm "$CONTAINER_NODE" node "$@"
     elif [[ "$1" == "npm" ]]; then
         shift 1
-        $COMPOSE run --rm ${CONTAINER_NODE} npm "$@"
+        $COMPOSE run --rm "$CONTAINER_NODE" npm "$@"
     elif [[ "$1" == "yarn" ]]; then
         shift 1
-        $COMPOSE run --rm ${CONTAINER_NODE} yarn "$@"
+        $COMPOSE run --rm "$CONTAINER_NODE" yarn "$@"
     elif [[ "$1" == "gulp" ]]; then
         shift 1
-        $COMPOSE run --rm ${CONTAINER_NODE} ./node_modules/.bin/gulp "$@"
+        $COMPOSE run --rm "$CONTAINER_NODE" ./node_modules/.bin/gulp "$@"
     elif [[ "$1" == "dump" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec ${CONTAINER_MYSQL} bash -c 'MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysqldump -u root --default-character-set=utf8mb4 $MYSQL_DATABASE'
+            $COMPOSE exec "$CONTAINER_MYSQL" bash -c 'MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysqldump -u root --default-character-set=utf8mb4 $MYSQL_DATABASE'
         else
-            $COMPOSE run --rm ${CONTAINER_MYSQL} bash -c 'MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysqldump -u root --default-character-set=utf8mb4 $MYSQL_DATABASE'
+            $COMPOSE run --rm "$CONTAINER_MYSQL" bash -c 'MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysqldump -u root --default-character-set=utf8mb4 $MYSQL_DATABASE'
         fi
     elif [[ "$1" == "mysql" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec ${CONTAINER_MYSQL} bash -c 'MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysql -u root $MYSQL_DATABASE'
+            $COMPOSE exec "$CONTAINER_MYSQL" bash -c 'MYSQL_PWD=$MYSQL_ROOT_PASSWORD mysql -u root $MYSQL_DATABASE'
         else
             echo "Error: This command can only be run while a MySQL container is running mysqld (mysql server)."
             echo "This command cannot run the server and the mysql client at the same time."

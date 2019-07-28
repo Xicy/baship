@@ -91,7 +91,7 @@ installSelf() {
 }
 
 setEnv(){
-    regex=${4:-".*"}
+    regex=${4:-.*}
     if [[ ! -z "$(grep "$2" "$1")" ]]; then
         $SEDCMD "s/$2=$regex$/$2=$3/" "$1"
     else
@@ -118,7 +118,7 @@ initProject(){
     echo "BASHIP: Setting .env Variables"
     cp ${envFile} "$envFile.bak.baship"
 
-    setEnv ${envFile} "SERVICES" "$SERVICES" ""
+    setEnv ${envFile} "SERVICES" "\"$SERVICES\"" ""
     setEnv ${envFile} "DB_HOST" "mysql"
     setEnv ${envFile} "DB_PASSWORD" "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)" ""
     setEnv ${envFile} "CACHE_DRIVER" "redis"
