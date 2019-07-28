@@ -66,7 +66,7 @@ if [[ -f ${envFile} ]]; then
     source ${envFile}
 fi
 
-export COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-${APP_NAME:-"app"}}
+export COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-${APP_NAME:-"Baship"}}
 export SERVICES=${SERVICES:-"$CONTAINER_APP $CONTAINER_MYSQL"}
 
 COMPOSE=$(which docker-compose)
