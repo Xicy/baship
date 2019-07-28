@@ -1,6 +1,6 @@
 #@IgnoreInspection BashAddShebang
 # This script is meant for quick & easy install via:
-#   $ curl -fsSL "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o - | sudo sh /dev/stdin install
+#   $ curl -fsSL "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o - | sudo bash /dev/stdin install
 
 # define colors that are used in the help screen
 ESC_SEQ="\x1b["
@@ -68,7 +68,7 @@ if [[ -f ${envFile} ]]; then
 fi
 
 export COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-${APP_NAME:-"Baship"}}
-export SERVICES=${SERVICES:-"$CONTAINER_APP $CONTAINER_MYSQL $CONTAINER_REDIS"}
+export SERVICES=${SERVICES:-"$CONTAINER_APP $CONTAINER_MYSQL"}
 
 COMPOSE=$(which docker-compose)
 if [[ -z "$COMPOSE" ]] || [[ ! -f "$(pwd)/.docker/docker-compose.yml" ]]; then

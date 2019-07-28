@@ -65,7 +65,7 @@ exportDockerFiles() {
 updateSelf() {
   DATA=$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest)
   LASTESTVERSION=$(echo "$DATA" | grep "tag_name.*"  | cut -d '"' -f 4 )
-  if [[ $(expr $(ver ${LASTESTVERSION}) - $(ver ${VERSION})) -gt 0 ]]; then
+  if [ $(expr $(ver ${LASTESTVERSION}) - $(ver ${VERSION})) -gt 0 ]; then
     curl -s -L "$(echo "$DATA" | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
     printf "${COL_LGREEN}Update Successfully ( ${VERSION} -> ${LASTESTVERSION} )${COL_RESET}\n"
     exit 0
@@ -84,14 +84,14 @@ installDocker() {
 installSelf() {
     curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o /usr/local/bin/baship
 	chmod +x /usr/local/bin/baship
-	if [[ -z "$( grep "bin/baship" /etc/sudoers)" ]]; then
+	if [ -z "$( grep "bin/baship" /etc/sudoers)" ]; then
         echo "$(whoami)     ALL=(ALL)       NOPASSWD:/usr/local/bin/baship" >> /etc/sudoers
     fi
 	printf "${COL_LGREEN}Baship Installing Successfully${COL_RESET}\n"
 }
 
 setEnv(){
-    if [[ ! -z "$(grep "$2" "$1")" ]]; then
+    if [ ! -z "$(grep "$2" "$1")" ]; then
         $SEDCMD "s/$2=$4$/$2=$3/" "$1"
     else
         echo "$2=$3" >> "$1"
@@ -100,15 +100,15 @@ setEnv(){
 
 initProject(){
 	echo "BASHIP: Initializing Baship..."
-    if [[ ! -d .docker ]]; then
+    if [ ! -d .docker ]; then
         exportDockerFiles $@
     fi
 
-	if [[ ! -f ${envFile} ]] && [[ -f "$(pwd)/.env.example" ]]; then
+	if [ ! -f ${envFile} ] && [ -f "$(pwd)/.env.example" ]; then
 		cp "$envFile.example" ${envFile}
 	fi
 
-    if [[ ! -f ${envFile} ]]; then
+    if [ ! -f ${envFile} ]; then
         echo "No .env file found within current working directory $(pwd)"
         echo "Create a .env file before re-initializing"
         exit 1
@@ -125,12 +125,12 @@ initProject(){
     setEnv ${envFile} "REDIS_HOST" "redis" ".*"
     setEnv ${envFile} "APP_NAME" "$COMPOSE_PROJECT_NAME"
 
-    if [[ -f "$envFile.bak" ]]; then
+    if [ -f "$envFile.bak" ]; then
         rm "$envFile.bak"
     fi
 
     echo "BASHIP: Installing Predis"
-    sh $0 composer require predis/predis
+    bash $0 composer require predis/predis
 
     echo ""
     echo "BASHIP: Complete!"
