@@ -2,9 +2,7 @@ FROM ubuntu:18.04
 
 LABEL maintainer="Umut Akkaya"
 
-ENV WWWUSER=1337
-
-RUN useradd -ms /bin/bash -u $WWWUSER baship
+RUN useradd -ms /bin/bash -u 1337 baship
 WORKDIR /var/www
 
 ENV TZ=UTC
