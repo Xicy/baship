@@ -66,7 +66,12 @@ updateSelf() {
   DATA=$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest)
   LASTESTVERSION=$(echo "$DATA" | grep "tag_name.*"  | cut -d '"' -f 4 )
   if [ $(expr $(ver ${LASTESTVERSION}) - $(ver ${VERSION})) -gt 0 ]; then
-    curl -s -L "$(echo "$DATA" | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
+    if [[ "$(command -v ip)" ]]; then
+        sudo curl -s -L "$(echo "$DATA" | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
+    else
+        curl -s -L "$(echo "$DATA" | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o $0
+    fi
+
     printf "${COL_LGREEN}Update Successfully ( ${VERSION} -> ${LASTESTVERSION} )${COL_RESET}\n"
     exit 0
   else
