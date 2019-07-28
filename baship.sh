@@ -18,9 +18,9 @@ if [[ $# -gt 0 ]]; then
         installSelf
 		installDocker
 	elif [[ "$1" == "update" ]]; then
-        updateSelf $0
+        updateSelf $@
 	elif [[ "$1" == "export" ]]; then
-        exportDockerFiles $0
+        exportDockerFiles $@
     elif [[ "$1" == "start" ]]; then
         $COMPOSE up -d ${SERVICES}
     elif [[ "$1" == "stop" ]]; then
@@ -86,7 +86,7 @@ if [[ $# -gt 0 ]]; then
         fi
     elif [[ "$1" == "ssh" ]]; then
         shift 1
-        if [[ "$EXEC" == "yes" ]] && [[ "$1" != "$CONTAINER_NODE" || "$1" != "$CONTAINER_MYSQL" ]]; then
+        if [[ "$EXEC" == "yes" && "$1" != "$CONTAINER_NODE" && "$1" != "$CONTAINER_MYSQL" && "$1" != "$CONTAINER_REDIS" ]]; then
             $COMPOSE exec -u baship $1 bash
         else
             $COMPOSE run --rm $1 bash

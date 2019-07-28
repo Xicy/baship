@@ -1,6 +1,13 @@
 #@IgnoreInspection BashAddShebang
 ver() { printf "%03d%03d%03d" $(echo "$1" | tr '.' ' '); }
 amIRoot() { [[ "$(id -u)" -eq 0 ]]; }
+setEnv(){
+    if [ ! -z "$(grep "$2" "$1")" ]; then
+        $SEDCMD "s/$2=$4$/$2=$3/" "$1"
+    else
+        echo "$2=$3" >> "$1"
+    fi
+}
 
 showVersion() {
     intro="\n🐳  ${COL_GREEN}Baship for Docker${COL_RESET}"
@@ -65,7 +72,7 @@ exportDockerFiles() {
 
 updateSelf() {
   if ! amIRoot; then
-    sudo bash $0 $@
+    sudo $0 update
     return
   fi
   DATA=$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest)
@@ -98,14 +105,6 @@ installSelf() {
         echo "ALL     ALL=(ALL)       NOPASSWD:/usr/local/bin/baship update" >> /etc/sudoers
     fi
 	printf "${COL_LGREEN}Baship Installing Successfully${COL_RESET}\n"
-}
-
-setEnv(){
-    if [ ! -z "$(grep "$2" "$1")" ]; then
-        $SEDCMD "s/$2=$4$/$2=$3/" "$1"
-    else
-        echo "$2=$3" >> "$1"
-    fi
 }
 
 initProject(){
