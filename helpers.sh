@@ -134,13 +134,13 @@ initProject(){
         return
     fi
 
-    COMPOSER=$(which composer)
     echo "BASHIP: Installing Predis"
+    COMPOSER=$(which composer)
     if [[ -z "$COMPOSER" ]]; then
       if [[ "$EXEC" == "yes" ]]; then
-        $COMPOSE exec -u baship app composer require predis/predis
+        $COMPOSE exec -u $UID ${CONTAINER_APP} composer require predis/predis
       else
-        $COMPOSE run --rm app composer require predis/predis
+        $COMPOSE run --rm ${CONTAINER_APP} composer require predis/predis
       fi
     else
         $COMPOSER require predis/predis
