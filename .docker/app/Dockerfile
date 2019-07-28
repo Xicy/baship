@@ -50,6 +50,4 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY start-container /usr/local/bin/start-container
 RUN chmod +x /usr/local/bin/start-container && chmod -R 644 /etc/cron.d && crontab /etc/cron.d/baship-cron
 
-CMD cron
-
 ENTRYPOINT ["start-container"]
