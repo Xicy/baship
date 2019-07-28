@@ -100,11 +100,6 @@ setEnv(){
 }
 
 initProject(){
-    if [[ ! -d .docker ]]; then
-        exportDockerFiles $@
-        initProject $@
-        return
-    fi
 	echo "BASHIP: Initializing Baship..."
 
 	if [[ ! -f ${envFile} ]] && [[ -f "$(pwd)/.env.example" ]]; then
@@ -130,6 +125,13 @@ initProject(){
 
     if [[ -f "$envFile.bak" ]]; then
         rm "$envFile.bak"
+    fi
+
+    if [[ ! -d .docker ]]; then
+        exportDockerFiles $@
+        echo "BASHIP: Rebooting Script..."
+        sh $0 $@
+        return
     fi
 
     COMPOSER=$(which composer)
