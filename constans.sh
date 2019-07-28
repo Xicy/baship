@@ -14,6 +14,7 @@ COL_MAGENTA=${ESC_SEQ}"0;35m"
 CONTAINER_APP="app"
 CONTAINER_MYSQL="mysql"
 CONTAINER_NODE="node"
+CONTAINER_REDIS="redis"
 
 UNAMEOUT="$(uname -s)"
 
@@ -67,7 +68,7 @@ if [[ -f ${envFile} ]]; then
 fi
 
 export COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-${APP_NAME:-"Baship"}}
-export SERVICES=${SERVICES:-"$CONTAINER_APP $CONTAINER_MYSQL"}
+export SERVICES=${SERVICES:-"$CONTAINER_APP $CONTAINER_MYSQL $CONTAINER_REDIS"}
 
 COMPOSE=$(which docker-compose)
 if [[ -z "$COMPOSE" ]] || [[ ! -f "$(pwd)/.docker/docker-compose.yml" ]]; then
