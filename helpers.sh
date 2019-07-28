@@ -90,57 +90,44 @@ installSelf() {
 	printf "${COL_LGREEN}Baship Installing Successfully${COL_RESET}\n"
 }
 
+setEnv(){
+    regex=${4:-".*"}
+    if [[ ! -z "$(grep "$2" "$1")" ]]; then
+        $SEDCMD "s/$2=$regex$/$2=$3/" "$1"
+    else
+        echo "$2=$3" >> "$1"
+    fi
+}
+
 initProject(){
 	echo "BASHIP: Initializing Baship..."
     if [[ ! -d .docker ]]; then
         exportDockerFiles $@
     fi
 
-	if [[ ! -f "$(pwd)/.env" ]] && [[ -f "$(pwd)/.env.example" ]]; then
-		cp "$(pwd)/.env.example" "$(pwd)/.env"
+	if [[ ! -f ${envFile} ]] && [[ -f "$(pwd)/.env.example" ]]; then
+		cp "$envFile.example" ${envFile}
 	fi
 
-    if [[ ! -f "$(pwd)/.env" ]]; then
+    if [[ ! -f ${envFile} ]]; then
         echo "No .env file found within current working directory $(pwd)"
         echo "Create a .env file before re-initializing"
         exit 1
     fi
 
     echo "BASHIP: Setting .env Variables"
-    cp "$(pwd)/.env" "$(pwd)/.env.bak.baship"
+    cp ${envFile} "$envFile.bak.baship"
 
-    if [[ ! -z "$(grep "DB_HOST" "$(pwd)/.env")" ]]; then
-        $SEDCMD "s/DB_HOST=.*/DB_HOST=mysql/" "$(pwd)/.env"
-    else
-        echo "DB_HOST=mysql" >> "$(pwd)/.env"
-    fi
+    setEnv ${envFile} "SERVICES" ${SERVICES} ""
+    setEnv ${envFile} "DB_HOST" "mysql"
+    setEnv ${envFile} "DB_PASSWORD" "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)" ""
+    setEnv ${envFile} "CACHE_DRIVER" "redis"
+    setEnv ${envFile} "SESSION_DRIVER" "redis"
+    setEnv ${envFile} "REDIS_HOST" "redis"
+    setEnv ${envFile} "APP_NAME" ${APP_NAME}
 
-    if [[ ! -z "$(grep "DB_PASSWORD" "$(pwd)/.env")" ]]; then
-        $SEDCMD "s/DB_PASSWORD=$\n/DB_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)/" "$(pwd)/.env"
-    else
-        echo "DB_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)" >> "$(pwd)/.env"
-    fi
-
-    if [[ ! -z "$(grep "CACHE_DRIVER" "$(pwd)/.env")" ]]; then
-        $SEDCMD "s/CACHE_DRIVER=.*/CACHE_DRIVER=redis/" "$(pwd)/.env"
-    else
-        echo "CACHE_DRIVER=redis" >> "$(pwd)/.env"
-    fi
-
-    if [[ ! -z "$(grep "SESSION_DRIVER" "$(pwd)/.env")" ]]; then
-        $SEDCMD "s/SESSION_DRIVER=.*/SESSION_DRIVER=redis/" "$(pwd)/.env"
-    else
-        echo "SESSION_DRIVER=redis" >> "$(pwd)/.env"
-    fi
-
-    if [[ ! -z "$(grep "REDIS_HOST" "$(pwd)/.env")" ]]; then
-        $SEDCMD "s/REDIS_HOST=.*/REDIS_HOST=redis/" "$(pwd)/.env"
-    else
-        echo "REDIS_HOST=redis" >> "$(pwd)/.env"
-    fi
-
-    if [[ -f "$(pwd)/.env.bak" ]]; then
-        rm "$(pwd)/.env.bak"
+    if [[ -f "$envFile.bak" ]]; then
+        rm "$envFile.bak"
     fi
 
     COMPOSER=$(which composer)
