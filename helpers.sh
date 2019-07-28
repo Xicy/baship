@@ -75,7 +75,7 @@ updateSelf() {
 }
 
 installDocker() {
-	sudo wget -q -O - "http://get.docker.com"  | bash
+	sudo curl -s -L "http://get.docker.com" -o - | sh
     sudo curl -s -L "$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "browser_download_url.*docker-compose-$(uname -s)-$(uname -m)\"" | cut -d '"' -f 4 )" -o /usr/local/bin/docker-compose
 	sudo chmod +x /usr/local/bin/docker-compose
 	printf "${COL_LGREEN}Docker Installing Successfully${COL_RESET}\n"

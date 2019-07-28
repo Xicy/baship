@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #VERSION
 #CONSTANTS
 #HELPERS
