@@ -65,7 +65,7 @@ exportDockerFiles() {
 
 updateSelf() {
   if ! amIRoot; then
-    sudo $0 $@
+    sudo bash $0 $@
     return
   fi
   DATA=$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest)
