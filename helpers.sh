@@ -1,5 +1,6 @@
 #@IgnoreInspection BashAddShebang
 ver() { printf "%03d%03d%03d" $(echo "$1" | tr '.' ' '); }
+amIRoot() { [[ "$(id -u)" -eq 0 ]]; }
 
 showVersion() {
     intro="\n🐳  ${COL_GREEN}Baship for Docker${COL_RESET}"
@@ -63,6 +64,10 @@ exportDockerFiles() {
 }
 
 updateSelf() {
+  if ! amIRoot; then
+    exec $0 $@
+    return
+  fi
   DATA=$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest)
   LASTESTVERSION=$(echo "$DATA" | grep "tag_name.*"  | cut -d '"' -f 4 )
   if [ $(expr $(ver ${LASTESTVERSION}) - $(ver ${VERSION})) -gt 0 ]; then
@@ -82,10 +87,15 @@ installDocker() {
 }
 
 installSelf() {
+    if ! amIRoot; then
+        printf "${COL_MAGENTA}Must run as root${COL_RESET}\n"
+        return
+    fi
+
     curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o /usr/local/bin/baship
 	chmod +x /usr/local/bin/baship
 	if [ -z "$( grep "bin/baship" /etc/sudoers)" ]; then
-        echo "$(whoami)     ALL=(ALL)       NOPASSWD:/usr/local/bin/baship" >> /etc/sudoers
+        echo "ALL     ALL=(ALL)       NOPASSWD:/usr/local/bin/baship update" >> /etc/sudoers
     fi
 	printf "${COL_LGREEN}Baship Installing Successfully${COL_RESET}\n"
 }
@@ -131,7 +141,7 @@ initProject(){
     fi
 
     echo "BASHIP: Installing Predis"
-    bash $0 composer require predis/predis
+    exec $0 composer require predis/predis
 
     echo ""
     echo "BASHIP: Complete!"
