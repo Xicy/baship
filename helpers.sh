@@ -101,6 +101,9 @@ setEnv(){
 
 initProject(){
 	echo "BASHIP: Initializing Baship..."
+    if [[ ! -d .docker ]]; then
+        exportDockerFiles $@
+    fi
 
 	if [[ ! -f ${envFile} ]] && [[ -f "$(pwd)/.env.example" ]]; then
 		cp "$envFile.example" ${envFile}
@@ -127,24 +130,8 @@ initProject(){
         rm "$envFile.bak"
     fi
 
-    if [[ ! -d .docker ]]; then
-        exportDockerFiles $@
-        echo "BASHIP: Rebooting Script..."
-        sh $0 $@
-        return
-    fi
-
     echo "BASHIP: Installing Predis"
-    COMPOSER=$(which composer)
-    if [[ -z "$COMPOSER" ]]; then
-      if [[ "$EXEC" == "yes" ]]; then
-        $COMPOSE exec -u $UID ${CONTAINER_APP} composer require predis/predis
-      else
-        $COMPOSE run --rm ${CONTAINER_APP} composer require predis/predis
-      fi
-    else
-        $COMPOSER require predis/predis
-    fi
+    sh $0 composer require predis/predis
 
     echo ""
     echo "BASHIP: Complete!"
