@@ -7,6 +7,7 @@ sed -i "s/xdebug\.remote_host\=.*/xdebug\.remote_host\=$XDEBUG_HOST/g" /etc/php/
 sed -i "s/user\ \=.*/user\ \= $WWWUSER/g" /etc/php/7.3/fpm/pool.d/www.conf
 # Set UID of user "baship"
 usermod -ou $WWWUSER baship
+groupmod -og $WWWGROUP baship
 
 # Ensure /.composer exists and is writable
 if [ ! -d /.composer ]; then

@@ -8,6 +8,22 @@ setEnv(){
         echo "$2=$3" >> "$1"
     fi
 }
+getOptions(){
+    OPTS=$(getopt -o "in:s:p:" --long "interact,name:,services:,port:" -n "$(basename $0)" -- "$@")
+    if [ $? != 0 ] ; then echo "Error in command line arguments." >&2 ; exit 1 ; fi
+    eval set -- "$OPTS"
+
+    while true; do
+      case "$1" in
+        -i | --interact ) interact=1; shift ;;
+        -n | --name ) APP_NAME="$2"; shift 2;;
+        -s | --services ) SERVICES="$2" shift 2;;
+        -p | --port ) APP_PORT="$2" shift 2;;
+        -u | --url ) APP_URL="$2" shift 2;;
+        -- ) shift; break ;; * ) break ;;
+      esac
+    done
+}
 
 showVersion() {
     intro="\n🐳  ${COL_GREEN}Baship for Docker${COL_RESET}"
@@ -107,8 +123,20 @@ installSelf() {
 	printf "${COL_LGREEN}Baship Installing Successfully${COL_RESET}\n"
 }
 
+initRedis(){
+    echo "Installing Predis"
+    bash $0 composer require predis/predis
+
+    echo "Setting .env Variables"
+    cp ${envFile} "$envFile.bak.baship"
+
+    setEnv ${envFile} "CACHE_DRIVER" "redis" ".*"
+    setEnv ${envFile} "SESSION_DRIVER" "redis" ".*"
+    setEnv ${envFile} "REDIS_HOST" "redis" ".*"
+}
+
 initProject(){
-	echo "BASHIP: Initializing Baship..."
+	echo "Initializing Baship..."
     if [ ! -d .docker ]; then
         exportDockerFiles $@
     fi
@@ -123,28 +151,23 @@ initProject(){
         exit 1
     fi
 
-    echo "BASHIP: Setting .env Variables"
+    echo "Setting .env Variables"
     cp ${envFile} "$envFile.bak.baship"
 
     setEnv ${envFile} "APP_NAME" "$COMPOSE_PROJECT_NAME"
-    setEnv ${envFile} "SERVICES" "\"$SERVICES\""
     setEnv ${envFile} "DB_USERNAME" "laravel" ".*"
     setEnv ${envFile} "DB_HOST" "mysql" ".*"
+    setEnv ${envFile} "DB_PORT" "${DB_PORT}" ".*"
     setEnv ${envFile} "DB_PASSWORD" "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
-    setEnv ${envFile} "CACHE_DRIVER" "redis" ".*"
-    setEnv ${envFile} "SESSION_DRIVER" "redis" ".*"
-    setEnv ${envFile} "REDIS_HOST" "redis" ".*"
+    setEnv ${envFile} "SERVICES" "\"$SERVICES\""
 
-    if [ -f "$envFile.bak" ]; then
-        rm "$envFile.bak"
-    fi
-
-    echo "BASHIP: Installing Predis"
-    bash $0 composer require predis/predis
+    bash $0 composer install
+    ##check is laravel
+    ##bash $0 artisan key:generate
 
     echo ""
-    echo "BASHIP: Complete!"
-    echo "BASHIP: You can now use Baship"
-    echo "BASHIP: Try starting it:"
+    echo "Complete!"
+    echo "You can now use Baship"
+    echo "Try starting it:"
     echo "baship start"
 }

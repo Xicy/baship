@@ -59,8 +59,8 @@ elif [[ "$MACHINE" == "mingw64" ]]; then # Git Bash
 fi
 
 export APP_PORT=${APP_PORT:-80}
-export MYSQL_PORT=${MYSQL_PORT:-3306}
 export WWWUSER=${WWWUSER:-$UID}
+export WWWGROUP=${WWWGROUP:-$(id -g)}
 envFile="$(pwd)/.env"
 
 if [[ -f ${envFile} ]]; then
@@ -82,3 +82,5 @@ else
         EXEC="no"
     fi
 fi
+
+interact=0

@@ -19,6 +19,7 @@ services:
       CONTAINER_ENV: "${APP_ENV}"
       XDEBUG_HOST: "${XDEBUG_HOST}"
       WWWUSER: "${WWWUSER}"
+      WWWGROUP: "${WWWGROUP}"
     volumes:
       - ..:/var/www:cached
   node:
@@ -28,14 +29,15 @@ services:
       dockerfile: Dockerfile
       args:
         uid: "${WWWUSER}"
+        gid: "${WWWGROUP}"
     user: node
     volumes:
       - ..:/var/www:cached
   mysql:
     <<: *defaults
     image: mysql:5.7
-    ports:
-      - "${MYSQL_PORT}:3306"
+    exports:
+      - "3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
