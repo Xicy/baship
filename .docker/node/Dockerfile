@@ -16,4 +16,4 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN usermod -ou $uid node
-RUN usermod -og $gid node
+RUN groupmod -og $gid node

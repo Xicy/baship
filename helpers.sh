@@ -143,6 +143,8 @@ initProject(){
 
 	if [ ! -f ${envFile} ] && [ -f "$(pwd)/.env.example" ]; then
 		cp "$envFile.example" ${envFile}
+		bash $0 init
+		exit 0
 	fi
 
     if [ ! -f ${envFile} ]; then
