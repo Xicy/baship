@@ -6,12 +6,12 @@ Baship stop
 Baship update
 
 ## Table of contents
-- [Features](#features)
+- [Installations](#installations)
 - [Features](#features)
 - [Contributors](#contributors)
 - [Changelog](#changelog)
 
-<a name="Installations"></a>
+<a name="installations"></a>
 ## Installations
 > curl -fsSL "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o - | sudo bash /dev/stdin install
 
