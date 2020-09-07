@@ -59,8 +59,8 @@ elif [[ "$MACHINE" == "mingw64" ]]; then # Git Bash
 fi
 
 export APP_PORT=${APP_PORT:-80}
-export MYSQL_PORT=${MYSQL_PORT:-3306}
 export WWWUSER=${WWWUSER:-$UID}
+export WWWGROUP=${WWWGROUP:-$(id -g)}
 envFile="$(pwd)/.env"
 
 if [[ -f ${envFile} ]]; then
@@ -68,7 +68,7 @@ if [[ -f ${envFile} ]]; then
 fi
 
 export COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-${APP_NAME:-"Baship"}}
-export SERVICES=${SERVICES:-"$CONTAINER_APP $CONTAINER_MYSQL"}
+export SERVICES=${SERVICES:-"$CONTAINER_APP $CONTAINER_MYSQL $CONTAINER_REDIS"}
 
 COMPOSE=$(which docker-compose)
 if [[ -z "$COMPOSE" ]] || [[ ! -f "$(pwd)/.docker/docker-compose.yml" ]]; then
@@ -82,3 +82,5 @@ else
         EXEC="no"
     fi
 fi
+
+interact=0

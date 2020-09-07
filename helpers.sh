@@ -1,8 +1,32 @@
 #@IgnoreInspection BashAddShebang
 ver() { printf "%03d%03d%03d" $(echo "$1" | tr '.' ' '); }
+amIRoot() { [[ "$(id -u)" -eq 0 ]]; }
+setEnv(){
+    if [ ! -z "$(grep "$2" "$1")" ]; then
+        $SEDCMD "s/$2=$4$/$2=$3/" "$1"
+    else
+        echo "$2=$3" >> "$1"
+    fi
+}
+getOptions(){
+    OPTS=$(getopt -o "in:s:p:" --long "interact,name:,services:,port:" -n "$(basename $0)" -- "$@")
+    if [ $? != 0 ] ; then echo "Error in command line arguments." >&2 ; exit 1 ; fi
+    eval set -- "$OPTS"
+
+    while true; do
+      case "$1" in
+        -i | --interact ) interact=1; shift ;;
+        -n | --name ) APP_NAME="$2"; shift 2;;
+        -s | --services ) SERVICES="$2" shift 2;;
+        -p | --port ) APP_PORT="$2" shift 2;;
+        -u | --url ) APP_URL="$2" shift 2;;
+        -- ) shift; break ;; * ) break ;;
+      esac
+    done
+}
 
 showVersion() {
-    intro="\n🐳 ${COL_GREEN}Baship for Docker${COL_RESET}"
+    intro="\n🐳  ${COL_GREEN}Baship for Docker${COL_RESET}"
     intro="$intro   ${COL_CYAN}Version ${VERSION}\n${COL_RESET}"
 
     printf "$intro"
@@ -58,11 +82,15 @@ showHelp() {
 }
 
 exportDockerFiles() {
-  sed '1,/^_DATA_/d' $0 | tar xzf -
+  sed '1,/^_DATA_/d' $0 | tar xzf - --no-same-owner
   printf "${COL_LGREEN}Exporting Successfully${COL_RESET}\n"
 }
 
 updateSelf() {
+  if ! amIRoot; then
+    sudo $0 update
+    return
+  fi
   DATA=$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest)
   LASTESTVERSION=$(echo "$DATA" | grep "tag_name.*"  | cut -d '"' -f 4 )
   if [ $(expr $(ver ${LASTESTVERSION}) - $(ver ${VERSION})) -gt 0 ]; then
@@ -82,30 +110,41 @@ installDocker() {
 }
 
 installSelf() {
+    if ! amIRoot; then
+        printf "${COL_MAGENTA}Must run as root${COL_RESET}\n"
+        return
+    fi
+
     curl -s -L "$(curl -s https://api.github.com/repos/Xicy/baship/releases/latest | grep "browser_download_url.*"  | cut -d '"' -f 4)" -o /usr/local/bin/baship
 	chmod +x /usr/local/bin/baship
 	if [ -z "$( grep "bin/baship" /etc/sudoers)" ]; then
-        echo "$(whoami)     ALL=(ALL)       NOPASSWD:/usr/local/bin/baship" >> /etc/sudoers
+        echo "ALL     ALL=(ALL)       NOPASSWD:/usr/local/bin/baship update" >> /etc/sudoers
     fi
 	printf "${COL_LGREEN}Baship Installing Successfully${COL_RESET}\n"
 }
 
-setEnv(){
-    if [ ! -z "$(grep "$2" "$1")" ]; then
-        $SEDCMD "s/$2=$4$/$2=$3/" "$1"
-    else
-        echo "$2=$3" >> "$1"
-    fi
+initRedis(){
+    echo "Installing Predis"
+    bash $0 composer require predis/predis
+
+    echo "Setting .env Variables"
+    cp ${envFile} "$envFile.bak.baship"
+
+    setEnv ${envFile} "CACHE_DRIVER" "redis" ".*"
+    setEnv ${envFile} "SESSION_DRIVER" "redis" ".*"
+    setEnv ${envFile} "REDIS_HOST" "redis" ".*"
 }
 
 initProject(){
-	echo "BASHIP: Initializing Baship..."
+	echo "Initializing Baship..."
     if [ ! -d .docker ]; then
         exportDockerFiles $@
     fi
 
 	if [ ! -f ${envFile} ] && [ -f "$(pwd)/.env.example" ]; then
 		cp "$envFile.example" ${envFile}
+		bash $0 init
+		exit 0
 	fi
 
     if [ ! -f ${envFile} ]; then
@@ -114,27 +153,23 @@ initProject(){
         exit 1
     fi
 
-    echo "BASHIP: Setting .env Variables"
+    echo "Setting .env Variables"
     cp ${envFile} "$envFile.bak.baship"
 
-    setEnv ${envFile} "SERVICES" "\"$SERVICES\""
-    setEnv ${envFile} "DB_HOST" "mysql" ".*"
-    setEnv ${envFile} "DB_PASSWORD" "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
-    setEnv ${envFile} "CACHE_DRIVER" "redis" ".*"
-    setEnv ${envFile} "SESSION_DRIVER" "redis" ".*"
-    setEnv ${envFile} "REDIS_HOST" "redis" ".*"
     setEnv ${envFile} "APP_NAME" "$COMPOSE_PROJECT_NAME"
+    setEnv ${envFile} "DB_USERNAME" "laravel" ".*"
+    setEnv ${envFile} "DB_HOST" "mysql" ".*"
+    setEnv ${envFile} "DB_PORT" "${DB_PORT}" ".*"
+    setEnv ${envFile} "DB_PASSWORD" "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
+    setEnv ${envFile} "SERVICES" "\"$SERVICES\""
 
-    if [ -f "$envFile.bak" ]; then
-        rm "$envFile.bak"
-    fi
-
-    echo "BASHIP: Installing Predis"
-    bash $0 composer require predis/predis
+    bash $0 composer install
+    ##check is laravel
+    ##bash $0 artisan key:generate
 
     echo ""
-    echo "BASHIP: Complete!"
-    echo "BASHIP: You can now use Baship"
-    echo "BASHIP: Try starting it:"
+    echo "Complete!"
+    echo "You can now use Baship"
+    echo "Try starting it:"
     echo "baship start"
 }
