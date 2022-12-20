@@ -12,7 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build
-        run: ./build.sh
+        run: |
+          chmod +x ./build.sh
+          ./build.sh
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
