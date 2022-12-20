@@ -27,7 +27,6 @@ RUN echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu bionic main" > /etc/apt
        php7.3-intl php7.3-readline php7.3-xdebug \
        php7.3-msgpack php7.3-igbinary php7.3-ldap \
     && php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer \
-    && composer global require hirak/prestissimo \
     && mkdir /run/php \
     && apt-get -y autoremove \
     && apt-get clean \
