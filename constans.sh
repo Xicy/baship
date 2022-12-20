@@ -74,7 +74,7 @@ COMPOSE=$(which docker-compose)
 if [[ -z "$COMPOSE" ]] || [[ ! -f "$(pwd)/.docker/docker-compose.yml" ]]; then
      EXEC="no"
 else
-    COMPOSE="$COMPOSE -f $(pwd)/.docker/docker-compose.yml"
+    COMPOSE="$COMPOSE --env-file $envFile -f $(pwd)/.docker/docker-compose.yml"
     PSRESULT="$($COMPOSE ps -q)"
     if [[ ! -z "$PSRESULT" ]]; then
         EXEC="yes"
