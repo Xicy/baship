@@ -10,7 +10,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN set -x \
-    && apt-get update && apt-get install -y gnupg gosu cron \
+    && apt-get update && apt-get install -y gnupg gosu \
     && gosu nobody true
 
 RUN echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu bionic main" > /etc/apt/sources.list.d/ppa_ondrej_php.list \
@@ -19,13 +19,13 @@ RUN echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu bionic main" > /etc/apt
     && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C300EE8C \
     && apt-get update \
     && apt-get install -y curl zip unzip git supervisor sqlite3 \
-    && apt-get install -y nginx php7.3-fpm php7.3-cli \
-       php7.3-pgsql php7.3-sqlite3 php7.3-gd \
-       php7.3-curl php7.3-memcached \
-       php7.3-imap php7.3-mysql php7.3-mbstring \
-       php7.3-xml php7.3-zip php7.3-bcmath php7.3-soap \
-       php7.3-intl php7.3-readline php7.3-xdebug \
-       php7.3-msgpack php7.3-igbinary php7.3-ldap \
+    && apt-get install -y nginx php8.0-fpm php8.0-cli \
+       php8.0-pgsql php8.0-sqlite3 php8.0-gd \
+       php8.0-curl php8.0-memcached php8.0-imagick \
+       php8.0-imap php8.0-mysql php8.0-mbstring \
+       php8.0-xml php8.0-zip php8.0-bcmath php8.0-soap \
+       php8.0-intl php8.0-readline php8.0-xdebug \
+       php8.0-msgpack php8.0-igbinary php8.0-ldap \
     && php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer \
     && mkdir /run/php \
     && apt-get -y autoremove \
@@ -36,17 +36,17 @@ RUN echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu bionic main" > /etc/apt
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
-ADD  crontab /etc/cron.d/baship-cron
 COPY h5bp /etc/nginx/h5bp
 COPY default /etc/nginx/sites-available/default
-COPY php-fpm.conf /etc/php/7.3/fpm/php-fpm.conf
-COPY xdebug.ini /etc/php/7.3/mods-available/xdebug.ini
-COPY baship.ini /etc/php/7.3/fpm/conf.d/99-baship.ini
+COPY php-fpm.conf /etc/php/8.0/fpm/php-fpm.conf
+COPY xdebug.ini /etc/php/8.0/mods-available/xdebug.ini
+COPY baship.ini /etc/php/8.0/fpm/conf.d/99-baship.ini
 
 EXPOSE 80
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY start-container /usr/local/bin/start-container
-RUN chmod +x /usr/local/bin/start-container && chmod -R 644 /etc/cron.d && crontab /etc/cron.d/baship-cron
+COPY supervisord_event.py /usr/local/bin/supervisord_event.py
+RUN chmod +x /usr/local/bin/start-container /usr/local/bin/supervisord_event.py
 
 ENTRYPOINT ["start-container"]

@@ -12,16 +12,22 @@ server {
     location = /favicon.ico { log_not_found off; access_log off; }
     location = /robots.txt  { log_not_found off; access_log off; }
 
-    client_max_body_size 100M;
+    client_max_body_size 2G;
+
+    location ^~ /storage/ {
+      internal;
+      alias /var/www/storage/app/public;
+    }
 
     location / {
         try_files $uri $uri/ /index.php$is_args$args;
     }
 
     location ~ \.php$ {
-        add_header X-Served-By Baship;
+	    add_header X-Served-By Baship;
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+        fastcgi_param PHP_VALUE "upload_max_filesize=2G \n post_max_size=0 \n memory_limit=2G \n max_input_time=0 \n max_execution_time=0";
+        fastcgi_pass unix:/run/php/php8.0-fpm.sock;
     }
 
     error_page 404 /index.php;
