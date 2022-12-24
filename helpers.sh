@@ -160,7 +160,7 @@ initProject(){
     setEnv ${envFile} "DB_USERNAME" "laravel" ".*"
     setEnv ${envFile} "DB_HOST" "mysql" ".*"
     setEnv ${envFile} "DB_PORT" "${DB_PORT}" ".*"
-    setEnv ${envFile} "DB_PASSWORD" "$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
+    setEnv ${envFile} "DB_PASSWORD" "$(cat /dev/urandom | LC_CTYPE=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
     setEnv ${envFile} "SERVICES" "\"$SERVICES\""
 
     bash $0 composer install
