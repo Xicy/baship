@@ -28,35 +28,35 @@ if [[ $# -gt 0 ]]; then
     elif [[ "$1" == "php" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec -u baship "$CONTAINER_APP" php "$@"
+            $COMPOSE exec "$CONTAINER_APP" php "$@"
         else
             $COMPOSE run --rm "$CONTAINER_APP" php "$@"
         fi
     elif [[ "$1" == "artisan" ]] || [[ "$1" == "art" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec -u baship "$CONTAINER_APP" php artisan "$@"
+            $COMPOSE exec "$CONTAINER_APP" php artisan "$@"
         else
             $COMPOSE run --rm "$CONTAINER_APP" php artisan "$@"
         fi
     elif [[ "$1" == "composer" ]] || [[ "$1" == "comp" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec -u baship "$CONTAINER_APP" composer "$@"
+            $COMPOSE exec "$CONTAINER_APP" composer "$@"
         else
             $COMPOSE run --rm "$CONTAINER_APP" composer "$@"
         fi
     elif [[ "$1" == "test" ]]; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec -u baship "$CONTAINER_APP" ./vendor/bin/phpunit "$@"
+            $COMPOSE exec "$CONTAINER_APP" ./vendor/bin/phpunit "$@"
         else
             $COMPOSE run --rm "$CONTAINER_APP" ./vendor/bin/phpunit "$@"
         fi
     elif [[ "$1" == "tinker" ]] ; then
         shift 1
         if [[ "$EXEC" == "yes" ]]; then
-            $COMPOSE exec -u baship "$CONTAINER_APP" php artisan tinker
+            $COMPOSE exec "$CONTAINER_APP" php artisan tinker
         else
             $COMPOSE run --rm "$CONTAINER_APP" php artisan tinker
         fi
